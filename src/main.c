@@ -1,37 +1,69 @@
 #include <SDL2/SDL.h>
-#include "game.h"
+#include <stdio.h>
 
-int main(void)
-{
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
-
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        return (1);
-
-    window = SDL_CreateWindow("Raycasting Game", SDL_WINDOWPOS_CENTERED,
-                              SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    if (!window)
-    {
-        SDL_Quit();
-        return (1);
+int main() {
+    // Initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        printf("SDL_Init Error: %s\n", SDL_GetError());
+        return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer)
-    {
+    // Create a window
+    SDL_Window *window = SDL_CreateWindow(
+        "Raycasting Game",               // Window title
+        SDL_WINDOWPOS_CENTERED,          // X position (centered)
+        SDL_WINDOWPOS_CENTERED,          // Y position (centered)
+        800,                             // Width
+        600,                             // Height
+        SDL_WINDOW_SHOWN                 // Flags
+    );
+
+    if (window == NULL) {
+        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    // Create a renderer
+    SDL_Renderer *renderer = SDL_CreateRenderer(
+        window,                          // Window to render to
+        -1,                              // Index of the rendering driver (-1 to use the first available)
+        SDL_RENDERER_ACCELERATED         // Use hardware acceleration
+    );
+
+    if (renderer == NULL) {
+        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_Quit();
-        return (1);
+        return 1;
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-    SDL_Delay(3000); /* Display for 3 seconds */
+    // Main loop
+    SDL_Event e;
+    int quit = 0;
 
+    while (!quit) {
+        // Handle events
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                quit = 1;
+            }
+        }
+
+        // Set the draw color (e.g., white background)
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        
+        // Clear the window with the draw color
+        SDL_RenderClear(renderer);
+
+        // Present the renderer
+        SDL_RenderPresent(renderer);
+    }
+
+    // Cleanup and close the window
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    return (0);
+
+    return 0;
 }
