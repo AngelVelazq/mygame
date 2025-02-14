@@ -63,7 +63,7 @@ void raycast(SDL_Surface *screenSurface) {
         /* Step direction */
         int stepX, stepY;
         int hit = 0;
-        int side; // Vertical or horizontal wall hit
+        int side; // Vertical or horizontal wall hit 
 
         /* Set initial step and side distances */
         if (rayDirX < 0) {
