@@ -1,18 +1,21 @@
-# OBJS specifies the source files
-OBJS = src/main.c src/raycasting.c src/game.c
-
-# CC specifies the compiler
 CC = gcc
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=gnu99
+LDFLAGS = -L./venv_sdl2/lib -Wl,-rpath,./venv_sdl2/lib -lSDL2 -lm
+INCLUDES = -I./venv_sdl2/include
 
-# COMPILER_FLAGS specifies the additional compilation options
-COMPILER_FLAGS = -Wall -Wextra -Werror -pedantic -std=gnu99
+SRC = src/main.c src/raycasting.c src/game.c
+OBJ = $(SRC:.c=.o)
+TARGET = raycasting_game
 
-# LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2 -lm
+all: $(TARGET)
 
-# OBJ_NAME specifies the name of the executable
-OBJ_NAME = raycasting_game
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) $(INCLUDES) $(OBJ) $(LDFLAGS) -o $(TARGET)
 
-# This is the target that compiles our executable
-all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(OBJ) $(TARGET)
+
+re: clean all
